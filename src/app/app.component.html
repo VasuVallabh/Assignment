@@ -138,9 +138,14 @@
                   (change)="onSelectAll($event)"
                 />
               </th>
-              <th scope="col">Employee</th>
+              
+              <th scope="col" (click)="sortEmp(); eSorting = !eSorting">Employee Name
+                <span class="fa fa-sort"></span>
+              </th>
               <th scope="col">Status</th>
-              <th scope="col">Date</th>
+              <th scope="col" (click)="sortDate(); dSorting = !dSorting">Date
+                <span class="fa fa-sort"></span>
+              </th>
               <th scope="col">Actions</th>
             </tr>
           </thead>

@@ -33,12 +33,31 @@ export class AppComponent implements OnInit {
   editEmployeeName: string = '';
 
   allSelected: boolean = false;
-
+  eSorting: boolean = false;
+  dSorting: boolean = false;
 
   constructor(private _emp: EmployeeService, private formBuilder: FormBuilder, public datePipe: DatePipe) { 
     //initialize form
    this.initForm();
   }
+
+  sortEmp(){
+      this.eSorting ? 
+                      this.employeeList = this.employeeList.sort((a, b) => a.name.localeCompare(b.name)) 
+                    :
+                      this.employeeList = this.employeeList.sort((a, b) => b.name.localeCompare(a.name));
+    }
+
+  sortDate(){
+      this.dSorting ? 
+                      this.employeeList = this.employeeList.sort((a, b) => {
+                           return Date.parse(a.date) - Date.parse(b.date);
+                      })
+                    :
+                      this.employeeList = this.employeeList.sort((a, b) => {
+                          return Date.parse(b.date) - Date.parse(a.date);
+                      });
+    }
 
   ngOnInit() {
     this._emp.getEmployeeData().subscribe(
