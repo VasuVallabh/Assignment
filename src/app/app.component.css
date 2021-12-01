@@ -1,0 +1,19 @@
+
+.active {
+    background: green;
+    color: white;
+  }
+  
+.inactive {
+    background: rgb(141, 141, 141);
+    color: white;
+  }
+
+  .modal {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  thead, tbody{
+    text-align: center;
+  }
+  

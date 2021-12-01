@@ -1,0 +1,35 @@
+{
+    "employee": [
+      {
+        "name": "Employee 1",
+        "status": 1,
+        "date": "Wed Mar 10 2021 00:00:00",
+        "selected":false
+      },
+      {
+        "name": "Employee 2",
+        "status": 0,
+        "date": "Fri Oct 15 2021 00:00:00",
+        "selected":false
+      },
+      {
+        "name": "Employee 3",
+        "status": 1,
+        "date": "Thu Sep 23 2010 00:00:00",
+        "selected":false
+      },
+      {
+        "name": "Employee 4",
+        "status": 1,
+        "date": "Fri May 10 2002 00:00:00",
+        "selected":false
+      },
+      {
+        "name": "Employee 5",
+        "status": 0,
+        "date": "Wed Mar 10 2021 00:00:00",
+        "selected":false
+      }
+    ]
+}
+  
