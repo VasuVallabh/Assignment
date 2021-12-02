@@ -7,6 +7,7 @@ export interface Employee {
     status: number;
     date:   string;
     selected: boolean;
+    image: string;
 }
 
 export enum Status {

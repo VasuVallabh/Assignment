@@ -34,7 +34,7 @@
           (click)="deleteSelected()"
           [disabled]="deleteValid"
         >
-          Delete Selected {{selected.length}}
+          Delete Selected {{ selected.length }}
         </button>
 
         <!-- Add -->
@@ -86,6 +86,27 @@
                     </small>
                   </div>
 
+                  <div class="mb-3">
+                    <label for="name" class="form-label"> Image </label>
+                    <div class="input-group">
+                      <input
+                        type="file"
+                        class="form-control"
+                        id="inputGroupFile02"
+                        (change)="onFileChange($event)"
+                      />
+                      <label class="input-group-text" for="inputGroupFile02"
+                        >Remove</label
+                      >
+                    </div>
+                    <small
+                      class="text-danger"
+                      *ngIf="employeeForm.get('image')?.hasError('required')"
+                    >
+                      Image should be valid.
+                    </small>
+                  </div>
+
                   <div class="mb-3 form-check">
                     <input
                       type="checkbox"
@@ -134,16 +155,21 @@
                   class="form-check-input"
                   id="exampleCheck1"
                   name="selectAll"
-                  [checked]="allSelected" (change)="allSelected = !allSelected"
+                  [checked]="allSelected"
+                  (change)="allSelected = !allSelected"
                   (change)="onSelectAll($event)"
                 />
               </th>
-              
-              <th scope="col" (click)="sortEmp(); eSorting = !eSorting">Employee Name
+
+              <th scope="col">Image</th>
+
+              <th scope="col" (click)="sortEmp(); eSorting = !eSorting">
+                Employee Name
                 <span class="fa fa-sort"></span>
               </th>
               <th scope="col">Status</th>
-              <th scope="col" (click)="sortDate(); dSorting = !dSorting">Date
+              <th scope="col" (click)="sortDate(); dSorting = !dSorting">
+                Date
                 <span class="fa fa-sort"></span>
               </th>
               <th scope="col">Actions</th>
@@ -151,17 +177,27 @@
           </thead>
           <tbody>
             <tr *ngFor="let emp of employeeList; let i = index">
-              <th scope="col">
+              <td scope="col">
                 <input
                   type="checkbox"
                   class="form-check-input"
                   id="exampleCheck1"
                   name="selectAll"
                   [checked]="emp.selected"
-                  value={{i}}
+                  value="{{ i }}"
                   (change)="onSelect($event)"
                 />
-              </th>
+              </td>
+
+              <td scope="col">
+                <img
+                  src="{{ emp.image }}"
+                  alt="{{ emp.name }}"
+                  class="img-thumbnail"
+                  width="40"
+                />
+              </td>
+
               <td>{{ emp.name }}</td>
               <td
                 [ngClass]="{

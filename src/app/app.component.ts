@@ -14,7 +14,7 @@ import { DatePipe, formatDate } from '@angular/common';
 })
 export class AppComponent implements OnInit {
 
-  display = 'none';
+  display = 'block';
   jsonData: EmployeeModel = { employee: [] };
   employeeList: Employee[] = [];
   employeeListCopy: Employee[] = [];
@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
   inactiveList: Employee[] = [];
 
   employeeForm = new FormGroup({});
-  employeeObj = { name: '', status: 0, date: '', selected: false };
+  employeeObj = { name: '', status: 0, date: '', selected: false, image: '' };
 
   myDate = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
   editIndex:number = -1;
@@ -35,6 +35,8 @@ export class AppComponent implements OnInit {
   allSelected: boolean = false;
   eSorting: boolean = false;
   dSorting: boolean = false;
+
+  fileString: String = "";
 
   constructor(private _emp: EmployeeService, private formBuilder: FormBuilder, public datePipe: DatePipe) { 
     //initialize form
@@ -75,12 +77,24 @@ export class AppComponent implements OnInit {
     }
 
   initForm() {
-
     this.employeeForm = this.formBuilder.group({
       name: new FormControl('', Validators.required),
       active: new FormControl(true),
-      date: [this.myDate, Validators.required]
+      date: [this.myDate, Validators.required],
+      image: new FormControl('', Validators.required)
     });
+  }
+
+  onFileChange(event:any) {
+    const file: File = event.target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      this.fileString = reader.result as string;
+      this.employeeForm.patchValue({
+        image: this.fileString
+      })
+    }
   }
 
   get name() {
@@ -95,7 +109,6 @@ export class AppComponent implements OnInit {
     return this.employeeForm.get('date')?.value;
   }
 
- 
   get employeeNames(){
     return this.allList.map(item => item.name);
   }
@@ -110,10 +123,14 @@ export class AppComponent implements OnInit {
       let name = this.name?.value;
       let active = this.active?.value;
       let date = this.datePipe.transform(this.date, 'EEE MMM dd yyyy hh:mm:ss');
+      let image = this.employeeForm.get('image')?.value;
+      
       this.employeeList = this.employeeListCopy;
         if (!this.employeeNames.includes(name) ) {
-          this.addEmployee(name, active, date);
+          this.addEmployee(name, active, date, image);
         }
+      console.log(this.employeeList);
+
         this.resetEmpObject
         this.initForm();
         this.employeeListCopy = this.employeeList;
@@ -124,6 +141,7 @@ export class AppComponent implements OnInit {
       this.employeeObj.name = String(this.name?.value);
       this.employeeObj.status = Number(+this.active?.value);
       this.employeeObj.date = String(this.date);
+      this.employeeObj.image = String(this.employeeForm.get('image')?.value);
       this.employeeList = this.employeeListCopy;
       if(!this.employeeNames.includes(this.employeeObj.name)){
         this.editEmployee(this.employeeObj);
@@ -136,12 +154,14 @@ export class AppComponent implements OnInit {
       this.employeeListCopy = this.employeeList;
       this.initData();
     }
+
   }
 
-  addEmployee(name: any, active: any, date: any) {
+  addEmployee(name: any, active: any, date: any, image: any) {
     this.employeeObj.name = name;
     this.employeeObj.status = Number(+active);
     this.employeeObj.date = date;
+    this.employeeObj.image = image;
     this.employeeList = [...this.employeeList, this.employeeObj];
     this.onCloseHandled();
   }
@@ -202,7 +222,7 @@ export class AppComponent implements OnInit {
     }
 
     resetEmpObject(){
-      this.employeeObj = { name: '', status: 0, date: '', selected: false };
+      this.employeeObj = { name: '', status: 0, date: '', selected: false, image: '' };
     }
     
     openModal(action:any, emp?:any) {
