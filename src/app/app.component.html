@@ -28,7 +28,8 @@
         </div>
 
         <!-- Delete Selected -->
-        <button *ngIf="selected.length>0"
+        <button
+          *ngIf="selected.length > 0"
           type="button"
           class="btn btn-danger m-2"
           (click)="deleteSelected()"
@@ -189,10 +190,12 @@
 
               <td scope="col">
                 <img
+                  class="rounded-circle zoom"
+                  alt="100x100"
                   src="{{ emp.image }}"
                   alt="{{ emp.name }}"
-                  class="img-thumbnail"
-                  width="40"
+                  data-holder-rendered="true"
+                  width="60px"
                 />
               </td>
 
@@ -207,9 +210,11 @@
               </td>
               <td>{{ emp.date | date: "dd-MMM-YYYY" }}</td>
               <td>
-                <i class="fas fa-edit"  (click)="openModal('Edit', emp)"></i>
-                <i class="fas fa-trash-alt ms-4" 
-                (click)="removeEmployee(emp)"></i>
+                <i class="fas fa-edit" (click)="openModal('Edit', emp)"></i>
+                <i
+                  class="fas fa-trash-alt ms-4"
+                  (click)="removeEmployee(emp)"
+                ></i>
               </td>
             </tr>
           </tbody>

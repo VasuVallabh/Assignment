@@ -46,7 +46,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     if(localStorage.length > 0){
       var data = JSON.parse(localStorage.getItem('employeeList') || '[]');
-      this.employeeList = data;
+      this.employeeList = data.employee;
     }
     else{
       console.log("localStorage is empty");
