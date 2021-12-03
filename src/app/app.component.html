@@ -175,7 +175,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let emp of employeeList; let i = index">
+            <tr
+              *ngFor="let emp of employeeList; let i = index"
+              [ngStyle]= "{'opacity': i == removeIndex ? '0.5' : '1' }"
+            >
               <td scope="col">
                 <input
                   type="checkbox"
@@ -191,7 +194,6 @@
               <td scope="col">
                 <img
                   class="rounded-circle zoom"
-                  alt="100x100"
                   src="{{ emp.image }}"
                   alt="{{ emp.name }}"
                   data-holder-rendered="true"
@@ -209,17 +211,17 @@
                 {{ emp.status == 1 ? "Active" : "Inactive" }}
               </td>
               <td>{{ emp.date | date: "dd-MMM-YYYY" }}</td>
-              <td>
+              <td *ngIf= "i !== removeIndex">
                 <i class="fas fa-edit" (click)="openModal('Edit', emp)"></i>
-                <i
-                  class="fas fa-trash-alt ms-4"
-                  (click)="removeEmployee(emp)"
-                ></i>
+                <i class="fas fa-trash-alt ms-4" (click)="removeEmployee(emp)"></i>
+              </td>
+              <td *ngIf= "i == removeIndex">
+                <i class="fa fa-undo" aria-hidden="true" (click)="undoRemove(emp)"></i>
               </td>
             </tr>
           </tbody>
         </table>
-        <pre>{{ employeeList | json }}</pre>
+        <!-- <pre>{{ employeeList | json }}</pre> -->
       </div>
     </div>
   </div>

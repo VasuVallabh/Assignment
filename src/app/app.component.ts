@@ -15,6 +15,10 @@ import { DatePipe, formatDate } from '@angular/common';
 export class AppComponent implements OnInit {
 
   display = 'none';
+  opacity = '100%';
+  
+  is_mail_sent = true;
+
   jsonData: EmployeeModel = { employee: [] };
   employeeList: Employee[] = [];
   employeeListCopy: Employee[] = [];
@@ -37,6 +41,9 @@ export class AppComponent implements OnInit {
   dSorting: boolean = false;
 
   fileString: String = "";
+  removeIndex: number = -1;
+
+  timer:any;
 
   constructor(private _emp: EmployeeService, private formBuilder: FormBuilder, public datePipe: DatePipe) { 
     //initialize form
@@ -45,54 +52,50 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     if(localStorage.length > 0){
-      var data = JSON.parse(localStorage.getItem('employeeList') || '[]');
-      this.employeeList = data.employee;
+      this.employeeList = JSON.parse(localStorage.getItem('employeeList') || '[]');
     }
     else{
       console.log("localStorage is empty");
       localStorage.setItem('employeeList', JSON.stringify(
-        {
-          "employee": [
-            {
-              "name": "Employee 1",
-              "status": 1,
-              "date": "Wed Mar 10 2021 00:00:00",
-              "selected":false,
-              "image":"../assets/img/emp1.jpg"
-            },
-            {
-              "name": "Employee 2",
-              "status": 0,
-              "date": "Fri Oct 15 2021 00:00:00",
-              "selected":false,
-              "image":"../assets/img/emp2.jpg"
-            },
-            {
-              "name": "Employee 3",
-              "status": 1,
-              "date": "Thu Sep 23 2010 00:00:00",
-              "selected":false,
-              "image":"../assets/img/emp3.jpg"
-            },
-            {
-              "name": "Employee 4",
-              "status": 1,
-              "date": "Fri May 10 2002 00:00:00",
-              "selected":false,
-              "image":"../assets/img/emp4.jpg"
-            },
-            {
-              "name": "Employee 5",
-              "status": 0,
-              "date": "Wed Mar 10 2021 00:00:00",
-              "selected":false,
-              "image":"../assets/img/emp5.jpg"
-            }
-          ]
-      }  
+        [
+          {
+            "name": "Employee 1",
+            "status": 1,
+            "date": "Wed Mar 10 2021 00:00:00",
+            "selected":false,
+            "image":"../assets/img/emp1.jpg"
+          },
+          {
+            "name": "Employee 2",
+            "status": 0,
+            "date": "Fri Oct 15 2021 00:00:00",
+            "selected":false,
+            "image":"../assets/img/emp2.jpg"
+          },
+          {
+            "name": "Employee 3",
+            "status": 1,
+            "date": "Thu Sep 23 2010 00:00:00",
+            "selected":false,
+            "image":"../assets/img/emp3.jpg"
+          },
+          {
+            "name": "Employee 4",
+            "status": 1,
+            "date": "Fri May 10 2002 00:00:00",
+            "selected":false,
+            "image":"../assets/img/emp4.jpg"
+          },
+          {
+            "name": "Employee 5",
+            "status": 0,
+            "date": "Wed Mar 10 2021 00:00:00",
+            "selected":false,
+            "image":"../assets/img/emp5.jpg"
+          }
+        ]  
       ));
-      var data = JSON.parse(localStorage.getItem('employeeList') || '[]');
-      this.employeeList = data.employee;
+      this.employeeList = JSON.parse(localStorage.getItem('employeeList') || '[]');
     }
     console.log(this.employeeList)
     this.employeeListCopy = this.employeeList;
@@ -230,13 +233,22 @@ export class AppComponent implements OnInit {
   }
 
   removeEmployee(emp:any) {
-    //find employee and remove from the list
-    this.employeeList = this.allList.filter((item) => item.name != emp.name);
-    this.employeeListCopy = this.employeeList;
-    localStorage.setItem('employeeList', JSON.stringify(this.employeeList));
-    this.initData();
+    this.removeIndex = this.employeeList.indexOf(emp);
+    this.timer = setTimeout(() => {
+       //find employee and remove from the list
+      this.employeeList = this.allList.filter((item) => item.name != emp.name);
+      this.employeeListCopy = this.employeeList;
+      localStorage.setItem('employeeList', JSON.stringify(this.employeeList));
+      this.initData(); 
+      this.removeIndex = -1; 
+    } , 30000);
   }
-    
+
+  undoRemove(emp:any){
+    clearTimeout(this.timer);
+    this.removeIndex = -1;
+  }
+
     initData() {
       this.activeList = this.setData("ACTIVE");
       this.inactiveList = this.setData("INACTIVE");
