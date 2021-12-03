@@ -14,7 +14,7 @@ import { DatePipe, formatDate } from '@angular/common';
 })
 export class AppComponent implements OnInit {
 
-  display = 'block';
+  display = 'none';
   jsonData: EmployeeModel = { employee: [] };
   employeeList: Employee[] = [];
   employeeListCopy: Employee[] = [];
@@ -43,6 +43,62 @@ export class AppComponent implements OnInit {
    this.initForm();
   }
 
+  ngOnInit() {
+    if(localStorage.length > 0){
+      var data = JSON.parse(localStorage.getItem('employeeList') || '[]');
+      this.employeeList = data;
+    }
+    else{
+      console.log("localStorage is empty");
+      localStorage.setItem('employeeList', JSON.stringify(
+        {
+          "employee": [
+            {
+              "name": "Employee 1",
+              "status": 1,
+              "date": "Wed Mar 10 2021 00:00:00",
+              "selected":false,
+              "image":"../assets/img/emp1.jpg"
+            },
+            {
+              "name": "Employee 2",
+              "status": 0,
+              "date": "Fri Oct 15 2021 00:00:00",
+              "selected":false,
+              "image":"../assets/img/emp2.jpg"
+            },
+            {
+              "name": "Employee 3",
+              "status": 1,
+              "date": "Thu Sep 23 2010 00:00:00",
+              "selected":false,
+              "image":"../assets/img/emp3.jpg"
+            },
+            {
+              "name": "Employee 4",
+              "status": 1,
+              "date": "Fri May 10 2002 00:00:00",
+              "selected":false,
+              "image":"../assets/img/emp4.jpg"
+            },
+            {
+              "name": "Employee 5",
+              "status": 0,
+              "date": "Wed Mar 10 2021 00:00:00",
+              "selected":false,
+              "image":"../assets/img/emp5.jpg"
+            }
+          ]
+      }  
+      ));
+      var data = JSON.parse(localStorage.getItem('employeeList') || '[]');
+      this.employeeList = data.employee;
+    }
+    console.log(this.employeeList)
+    this.employeeListCopy = this.employeeList;
+    this.initData();
+    }
+
   sortEmp(){
       this.eSorting ? 
                       this.employeeList = this.employeeList.sort((a, b) => a.name.localeCompare(b.name)) 
@@ -61,27 +117,12 @@ export class AppComponent implements OnInit {
                       });
     }
 
-  ngOnInit() {
-    this._emp.getEmployeeData().subscribe(
-      {
-        next: (v: EmployeeModel) => {
-          this.jsonData = v;
-          this.employeeList = this.jsonData.employee;
-          this.employeeListCopy = this.employeeList;
-          this.initData();
-        },
-        error: (e) => console.error(e),
-        complete: () => console.info('complete'),
-      }
-      );
-    }
-
   initForm() {
     this.employeeForm = this.formBuilder.group({
       name: new FormControl('', Validators.required),
       active: new FormControl(true),
       date: [this.myDate, Validators.required],
-      image: new FormControl('', Validators.required)
+      image: new FormControl('',Validators.required)
     });
   }
 
@@ -109,6 +150,10 @@ export class AppComponent implements OnInit {
     return this.employeeForm.get('date')?.value;
   }
 
+  get image() {
+    return this.employeeForm.get('image')?.value;
+  }
+
   get employeeNames(){
     return this.allList.map(item => item.name);
   }
@@ -117,13 +162,24 @@ export class AppComponent implements OnInit {
     return this.employeeList.filter((item) => item.selected == true);
   }
 
+  resetFrom(){
+    this.employeeForm.patchValue({
+      name: '',
+      active: true,
+      date: this.myDate,
+      image: ''
+    });
+    this.employeeForm.reset();
+  }
+
   onSubmit() {
+
     if(this.currentAction == "Add"){
-      this.resetEmpObject
+      this.resetEmpObject();
       let name = this.name?.value;
       let active = this.active?.value;
       let date = this.datePipe.transform(this.date, 'EEE MMM dd yyyy hh:mm:ss');
-      let image = this.employeeForm.get('image')?.value;
+      let image = String(this.image);
       
       this.employeeList = this.employeeListCopy;
         if (!this.employeeNames.includes(name) ) {
@@ -152,6 +208,7 @@ export class AppComponent implements OnInit {
       this.resetEmpObject
       this.employeeForm.setControl('name', new FormControl('', Validators.required));
       this.employeeListCopy = this.employeeList;
+      localStorage.setItem('employeeList', JSON.stringify(this.employeeList));
       this.initData();
     }
 
@@ -163,6 +220,7 @@ export class AppComponent implements OnInit {
     this.employeeObj.date = date;
     this.employeeObj.image = image;
     this.employeeList = [...this.employeeList, this.employeeObj];
+    localStorage.setItem('employeeList', JSON.stringify(this.employeeList));
     this.onCloseHandled();
   }
 
@@ -175,6 +233,7 @@ export class AppComponent implements OnInit {
     //find employee and remove from the list
     this.employeeList = this.allList.filter((item) => item.name != emp.name);
     this.employeeListCopy = this.employeeList;
+    localStorage.setItem('employeeList', JSON.stringify(this.employeeList));
     this.initData();
   }
     
@@ -226,21 +285,25 @@ export class AppComponent implements OnInit {
     }
     
     openModal(action:any, emp?:any) {
-      this.resetEmpObject
+      this.resetEmpObject();
       this.initForm();
       if(action == "Add"){
        this.currentAction = "Add";
+       this.initForm();
       }
       if(action == "Edit"){
+        console.log(emp);
         this.currentAction = "Edit";
         this.employeeObj.name = emp.name;
         this.employeeObj.status = emp.status;
         this.employeeObj.date = String(this.datePipe.transform(emp.date, 'yyyy-MM-dd'));
+        this.employeeObj.image = emp.image;
         //'EEE MMM dd yyyy hh:mm:ss'
         this.employeeForm.patchValue({
           name:this.employeeObj.name,
           active:this.employeeObj.status,
-          date:this.employeeObj.date
+          date:this.employeeObj.date,
+          image:this.employeeObj.image
         });
         this.editIndex = this.allList.findIndex(item => item.name == emp.name);
         this.editEmployeeName = this.allList[this.editIndex].name;

@@ -28,7 +28,7 @@
         </div>
 
         <!-- Delete Selected -->
-        <button
+        <button *ngIf="selected.length>0"
           type="button"
           class="btn btn-danger m-2"
           (click)="deleteSelected()"
@@ -40,7 +40,7 @@
         <!-- Add -->
         <button
           type="button"
-          class="btn btn-success"
+          class="btn btn-success m-2"
           (click)="openModal('Add')"
         >
           Add
@@ -93,11 +93,9 @@
                         type="file"
                         class="form-control"
                         id="inputGroupFile02"
+                        name="image"
                         (change)="onFileChange($event)"
                       />
-                      <label class="input-group-text" for="inputGroupFile02"
-                        >Remove</label
-                      >
                     </div>
                     <small
                       class="text-danger"
@@ -209,22 +207,14 @@
               </td>
               <td>{{ emp.date | date: "dd-MMM-YYYY" }}</td>
               <td>
-                <button
-                  class="btn btn-primary"
-                  (click)="openModal('Edit', emp)"
-                >
-                  Edit
-                </button>
-                <button
-                  class="btn btn-danger ms-4"
-                  (click)="removeEmployee(emp)"
-                >
-                  Delete
-                </button>
+                <i class="fas fa-edit"  (click)="openModal('Edit', emp)"></i>
+                <i class="fas fa-trash-alt ms-4" 
+                (click)="removeEmployee(emp)"></i>
               </td>
             </tr>
           </tbody>
         </table>
+        <pre>{{ employeeList | json }}</pre>
       </div>
     </div>
   </div>
